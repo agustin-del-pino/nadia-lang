@@ -1,0 +1,5 @@
+include "nad:serial"
+
+func lst_setup_init() {
+    set_bytes_per_second(9600)
+}

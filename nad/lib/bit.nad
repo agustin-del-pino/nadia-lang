@@ -1,0 +1,4 @@
+def bit_increment(int)  int = "($1 << 1) | 1"
+def bit_is_set(int, int)  bool = "($1 & (1 << $2)) != 0"
+def bit_set(int, int)   int = "($1| (1 << $2))"
+def bit_unset(int, int) int = "$1 & ~(1 << $2)"

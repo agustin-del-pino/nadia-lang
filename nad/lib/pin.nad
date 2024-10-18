@@ -1,0 +1,11 @@
+type PinMode -> PinInput -> "int" {}
+
+def PinInput  PinMode = "INPUT"
+def PinOutput PinMode = "OUTPUT"
+def PinPullUp PinMode = "INPUT_PULLUP"
+
+def pin_mode(int, PinMode)        = "pinMode($1, $2)"
+def pin_has_signal(int) signal    = "digitalRead($1)"
+def pin_has_voltage(int) int      = "analogRead($1)"
+def pin_send_signal(int, signal)  = "digitalWrite($1, $2)"
+def pin_send_voltage(int, int)    = "analogWrite($1, $2)"

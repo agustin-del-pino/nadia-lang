@@ -1,0 +1,35 @@
+type int -> 0 -> "int" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+type float -> 0.0 -> "float" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+type bool -> False -> "bool" {
+    (1, not), (2, ==), (2, !=),
+    (2, and), (2, or)
+}
+
+
+type signal -> Low -> "int" {
+    (1, not), (2, ==), (2, !=)
+}
+
+type string -> "" -> "String" {
+    (2, +), (2, ==), (2, !=)
+}
+
+def Low signal  = "LOW"
+def High signal = "HIGH"
+def True bool   = "true"
+def False bool  = "false"
+
+def ref(any) any = "(&$1)"
+def ptr(any) any = "(*$1)"

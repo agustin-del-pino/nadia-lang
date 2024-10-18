@@ -33,3 +33,6 @@ def False bool  = "false"
 
 def ref(any) any = "(&$1)"
 def ptr(any) any = "(*$1)"
+
+def event_of(any) any = "event_$1"
+def trigger_of(any) bool = "ev_$1_trigger()"

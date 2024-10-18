@@ -1,3 +1,2 @@
 def print(string) = "Serial.println($1)"
-
-def set_bytes_per_second(int) = "Serial.begin($1)"
+def set_bauds(int) = "Serial.begin($1)"

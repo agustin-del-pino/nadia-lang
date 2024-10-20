@@ -60,11 +60,6 @@ func main() {
 		}
 	}
 }
-
-func map(arr *[]*string) []string {
-
-}
-
 `
 
 func main() {

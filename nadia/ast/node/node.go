@@ -39,4 +39,5 @@ const (
 	EventDef
 	EventFunc
 	StmtWrapper
+	FlowControl
 )

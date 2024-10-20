@@ -159,6 +159,14 @@ func parseBlock(t *lexer.Tokenizer, c *cursor) *ast.Block {
 	return &n
 }
 
+func parseFlowControl(t *lexer.Tokenizer, c *cursor) *ast.FlowControl {
+	c.assert(token.Stop.String()+"or"+token.Pass.String(), token.Stop, token.Pass)
+	defer c.next(t)
+	return &ast.FlowControl{
+		Tk: c.token().Clone(),
+	}
+}
+
 func parseStmt(t *lexer.Tokenizer, c *cursor) ast.Stmt {
 	switch c.Kind {
 	case token.Var, token.Const:
@@ -171,6 +179,8 @@ func parseStmt(t *lexer.Tokenizer, c *cursor) ast.Stmt {
 		return parseFor(t, c)
 	case token.When:
 		return parseWhen(t, c)
+	case token.Stop, token.Pass:
+		return parseFlowControl(t, c)
 	default:
 		x := parseExpr(t, c)
 

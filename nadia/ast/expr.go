@@ -7,7 +7,7 @@ import (
 
 type (
 	Ident struct {
-		Tk      *token.Tok
+		Tk *token.Tok
 	}
 	LitVal struct {
 		Tk *token.Tok

@@ -56,6 +56,9 @@ type (
 		Bodies    []*Block
 		Otherwise *Block
 	}
+	FlowControl struct {
+		Tk *token.Tok
+	}
 )
 
 func (n *Block) Kind() node.Kind { return node.Block }
@@ -104,6 +107,10 @@ func (n *When) Kind() node.Kind { return node.When }
 func (n *When) St() int         { return n.Tk.St }
 func (n *When) Ed() int         { return n.Cl.Ed }
 
+func (n *FlowControl) Kind() node.Kind { return node.FlowControl }
+func (n *FlowControl) St() int         { return n.Tk.St }
+func (n *FlowControl) Ed() int         { return n.Tk.Ed }
+
 func (n *Block) stmt()       {}
 func (n *StmtWrapper) stmt() {}
 func (n *Return) stmt()      {}
@@ -113,3 +120,4 @@ func (n *For) stmt()         {}
 func (n *ForRange) stmt()    {}
 func (n *ForEach) stmt()     {}
 func (n *When) stmt()        {}
+func (n *FlowControl) stmt() {}

@@ -14,6 +14,9 @@ func (c *cursor) next(t *lexer.Tokenizer) {
 	if c.Kind == token.Bad {
 		panic("bad formed token: '" + c.Val + "'")
 	}
+	if c.Kind == token.Comment {
+		c.next(t)
+	}
 }
 
 func (c *cursor) assert(ex string, k ...token.Kind) {

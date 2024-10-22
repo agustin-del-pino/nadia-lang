@@ -1,2 +1,5 @@
 def print(string) = "Serial.println($1)"
+def write(string) = "Serial.print($1)" 
 def set_bauds(int) = "Serial.begin($1)"
+def serial_has_bytes bool = "Serial.available() > 0"
+def serial_current_byte int = "Serial.read()"

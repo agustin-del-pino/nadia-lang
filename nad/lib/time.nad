@@ -1,0 +1,4 @@
+def wait(int) = "delay($1)"
+def elapsed_milliseconds int32 = "millis()"
+def elapsed_microseconds int32 = "micro()"
+

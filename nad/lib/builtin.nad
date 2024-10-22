@@ -1,4 +1,47 @@
+type uint8 -> 0 -> "unsigned char" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+type int8 -> 0 -> "char" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+type uint16 -> 0 -> "unsigned short" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+type int16 -> 0 -> "short" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+
+type int32 -> 0 -> "long" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
 type int -> 0 -> "int" {
+    (1, -), (2, +), (2, -), 
+    (2, *), (2, ^), (2, mod), 
+    (2, ==), (2, <), (2, >), 
+    (2, !=), (2, >=), (2, <=)
+}
+
+type byte -> 0 -> "char" {
     (1, -), (2, +), (2, -), 
     (2, *), (2, ^), (2, mod), 
     (2, ==), (2, <), (2, >), 
@@ -26,6 +69,7 @@ type string -> "" -> "String" {
     (2, +), (2, ==), (2, !=)
 }
 
+
 def Low signal  = "LOW"
 def High signal = "HIGH"
 def True bool   = "true"
@@ -36,3 +80,10 @@ def ptr(any) any = "(*$1)"
 
 def event_of(any) any = "event_$1"
 def trigger_of(any) bool = "ev_$1_trigger()"
+
+def to_byte(int) byte = "char($1)"
+def to_int(float) int = "int($1)"
+def to_float(int) float = "float($1)"
+def to_bool(int) bool = "$1 == 1"
+def to_signal(bool) signal = "$1 ? HIGH : LOW"
+def string_len(string) = "$1.length()"

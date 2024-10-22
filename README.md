@@ -4,7 +4,7 @@ Nadia Lang is an event oriented programming language for Arudino inspired by Go,
 # Install
 Use *Go CLI* to install the Nadia CLI.
 ```
-go install github.com/agustin-del-pino/nadia-lang
+go install github.com/agustin-del-pino/nadia-lang@latest
 ```
 
 Once installed, you can use the Nadia CLI. Use the `nadia init` command to initilize the necessary files.

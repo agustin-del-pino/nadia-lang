@@ -9,54 +9,33 @@ func Format(code []byte, indent int) []byte {
 	b := bytes.NewBuffer(nil)
 	tab := 0
 	c := append(code, 0x00)
-	for i := 0; ; {
-		if c[i] == 0x00 {
-			break
-		}
-
-		if c[i] == '}' {
-			tab--
-			if tab < 0 {
-				tab = 0
-			}
-			b.WriteByte('\n')
-			b.WriteString(strings.Repeat(" ", tab*indent))
-			b.WriteByte(c[i])
-			if c[i+1] == ';' {
-				b.WriteByte(c[i+1])
-				i++
-				if c[i+1] != '}' {
-					b.WriteByte('\n')
-				}
-				i++
-			} else {
+	var prn bool
+	for i := 0; c[i] != 0x00; i++ {
+		if i > 0 {
+			if (c[i-1] == '{' && c[i] != '}') ||
+				(c[i-1] == '}' && c[i] != ';') ||
+				(c[i-1] == ';' && !prn) {
 				b.WriteByte('\n')
-				i++
 			}
-			continue
-		}
-
-		if c[i] == '{' {
-			tab++
-			b.WriteByte(c[i])
-			b.WriteByte('\n')
-			b.WriteString(strings.Repeat(" ", tab*indent))
-			i++
-			continue
-		}
-
-		if c[i] == ';' {
-			b.WriteByte(c[i])
-			if c[i+1] != '}' {
-				b.WriteByte('\n')
+			if (c[i-1] == '{' && c[i] != '}') ||
+				(c[i-1] == ';' && !prn) ||
+				(c[i-1] == '}' && c[i] != '}') {
 				b.WriteString(strings.Repeat(" ", tab*indent))
 			}
-			i++
-			continue
 		}
 
 		b.WriteByte(c[i])
-		i++
+		switch c[i] {
+		case '(':
+			prn = true
+		case ')':
+			prn = false
+		case '{':
+			tab++
+		}
+		if c[i+1] == '}' {
+			tab--
+		}
 	}
 	return b.Bytes()
 }

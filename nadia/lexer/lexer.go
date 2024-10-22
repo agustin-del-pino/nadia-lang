@@ -55,8 +55,7 @@ func (t *Tokenizer) Tokenize(tok *token.Tok) {
 			}
 			t.token(tok, s, token.Comment)
 			return
-		}
-		if t.src[t.pos+1] == '*' {
+		} else if t.src[t.pos+1] == '*' {
 			s := t.pos
 			t.pos += 2
 			for ; !(t.src[t.pos] == 0x00 || (t.src[t.pos] == '*' && t.src[t.pos+1] == '/')); t.pos++ {
@@ -165,10 +164,35 @@ func (t *Tokenizer) Tokenize(tok *token.Tok) {
 		return
 	}
 
+	if t.src[t.pos] == '`' {
+		s := t.pos
+		t.pos++
+		for ; !(t.src[t.pos] == 0x00 || t.src[t.pos] == '`'); t.pos++ {
+			if t.src[t.pos] == '\\' && t.src[t.pos+1] == '`' {
+				t.pos++
+			}
+		}
+
+		if t.src[t.pos] != '`' {
+			t.bad(tok, "string is not close")
+			return
+		}
+
+		t.pos++
+		t.token(tok, s, token.String)
+		return
+	}
+
 	if t.src[t.pos] == '"' {
 		s := t.pos
 		t.pos++
 		for ; !(t.src[t.pos] == 0x00 || t.src[t.pos] == '\n' || t.src[t.pos] == '"'); t.pos++ {
+			if t.src[t.pos] == '\\' {
+				switch t.src[t.pos+1] {
+				case '\'', '"', '\\', 'n', 'r', 't', 'b', 'f', 'v', '0':
+					t.pos += 1
+				}
+			}
 		}
 
 		if t.src[t.pos] != '"' {

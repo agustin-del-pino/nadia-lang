@@ -2,6 +2,7 @@ package transpiler
 
 import (
 	"bytes"
+	"strings"
 
 	"github.com/agustin-del-pino/nadia-lang/nadia/ast"
 	"github.com/agustin-del-pino/nadia-lang/nadia/lexer/token"
@@ -10,7 +11,7 @@ import (
 type evNode struct {
 	Event    *ast.Event
 	Parent   *evNode
-	HasInit  bool
+	Init     *ast.EventFunc
 	Children []*evNode
 }
 
@@ -35,7 +36,21 @@ var operators = map[token.Kind]string{
 }
 
 func unquote(s string) string {
-	return s[1 : len(s)-1]
+	var b strings.Builder
+	for i := 1; i < len(s)-1; i++ {
+		if s[i] == '\\' {
+			if s[0] == '"' {
+				switch s[i+1] {
+				case '\'', '"', '\\', 'n', 'r', 't', 'b', 'f', 'v', '0':
+					i++
+				}
+			} else if s[0] == '`' && s[i+1] == '`' {
+				i++
+			}
+		}
+		b.WriteByte(s[i])
+	}
+	return b.String()
 }
 
 func transpileType(b *bytes.Buffer, scp *scope, t *ast.Ident) {
@@ -102,14 +117,14 @@ func Transpile(src *ast.Source) []byte {
 	}
 
 	for _, e := range src.Events {
-		var init bool
+		var init *ast.EventFunc
 		for _, fn := range src.EventsFunc[e.Name.Tk.Val] {
 			if fn.Link != nil && fn.Link.Tk.Val == "init" {
-				init = true
+				init = fn
 				break
 			}
 			if fn.Func != nil && fn.Func.Name.Tk.Val == "init" {
-				init = true
+				init = fn
 				break
 			}
 		}
@@ -120,24 +135,24 @@ func Transpile(src *ast.Source) []byte {
 		switch e.Parent.Tk.Val {
 		case "setup":
 			n := evNode{
-				Event:   e,
-				HasInit: init,
-				Parent:  setup.Root,
+				Event:  e,
+				Init:   init,
+				Parent: setup.Root,
 			}
 			setup.Root.Children = append(setup.Root.Children, &n)
 			setup.Refs[e.Name.Tk.Val] = &n
 		case "loop":
 			n := evNode{
-				Event:   e,
-				HasInit: init,
-				Parent:  loop.Root,
+				Event:  e,
+				Init:   init,
+				Parent: loop.Root,
 			}
 			loop.Root.Children = append(loop.Root.Children, &n)
 			loop.Refs[e.Name.Tk.Val] = &n
 		default:
 			n := evNode{
-				Event:   e,
-				HasInit: init,
+				Event: e,
+				Init:  init,
 			}
 			if ev, ok := setup.Refs[e.Parent.Tk.Val]; ok {
 				n.Parent = ev

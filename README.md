@@ -75,8 +75,12 @@ nadia build main.nad
 | For-Range                             | For Statement                | ✅      |
 | For-Each                              | For Each Statement           | ✅      |
 | Return                                | Return Statement             | ✅      |
+| Comments inline and multi-line        | Like C/C++                   | ✅      |
 | No semicolon                          | Like Go, Python, etc         | ✅      |
 | No parenthesis at statements          | Like Go, Python, etc         | ✅      |
+| Lazy initialization for vars/const    | The same thing of C/C++      | ✅      |
+| Multi-Line Strings                    | Like Go, Python, etc         | ✅      |
+| Variadic Function                     | Like Go                      | ❌      |
 | C/C++ Type Representation             | Represent type from C/C++    | ✅      |
 | Type Check                            | Semantic Analyzer            | ❌      |
 | Type Deduction                        | Like Go, TS, etc             | ❌      |

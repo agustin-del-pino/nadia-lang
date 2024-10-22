@@ -14,8 +14,10 @@ func transpileValDef(b *bytes.Buffer, scp *scope, n *ast.ValDef) {
 	transpileType(b, scp, n.Type)
 	b.WriteByte(' ')
 	b.WriteString(n.Name.Tk.Val)
-	b.WriteString(" = ")
-	transpileExpr(b, scp, n.Val)
+	if n.Val != nil {
+		b.WriteString(" = ")
+		transpileExpr(b, scp, n.Val)
+	}
 	b.WriteByte(';')
 }
 
@@ -57,9 +59,27 @@ func transpileFunc(b *bytes.Buffer, scp *scope, n *ast.Func) {
 	transpileBlock(b, scp, n.Body)
 }
 
+func formatEventFuncName(fn *ast.EventFunc) {
+	fn.Func.Name.Tk.Val = fn.Event.Tk.Val + "_" + fn.Func.Name.Tk.Val
+	if fn.Tk.Kind == token.Lst {
+		fn.Func.Name.Tk.Val = "lst_" + fn.Func.Name.Tk.Val
+	} else {
+		fn.Func.Name.Tk.Val = "ev_" + fn.Func.Name.Tk.Val
+	}
+}
+
 func visit(b *bytes.Buffer, scp *scope, root *bytes.Buffer, nd *evNode, mf map[string][]*ast.EventFunc) {
 	for _, ev := range nd.Children {
 		transpileEventToStruct(b, scp, ev.Event)
+		if nd.Init != nil {
+			if nd.Init.Func != nil {
+				formatEventFuncName(nd.Init)
+				transpileFunc(b, scp, nd.Init.Func)
+			}
+			transpileEvent(b, scp, ev.Event, true)
+		} else {
+			transpileEvent(b, scp, ev.Event, false)
+		}
 
 		root.WriteString("if (ev_")
 		root.WriteString(ev.Event.Name.Tk.Val)
@@ -67,31 +87,19 @@ func visit(b *bytes.Buffer, scp *scope, root *bytes.Buffer, nd *evNode, mf map[s
 
 		for _, fn := range mf[ev.Event.Name.Tk.Val] {
 			if fn.Func != nil {
-				fn.Func.Name.Tk.Val = ev.Event.Name.Tk.Val + "_" + fn.Func.Name.Tk.Val
-
-				if fn.Tk.Kind == token.Lst {
-					fn.Func.Name.Tk.Val = "lst_" + fn.Func.Name.Tk.Val
-				} else {
-					fn.Func.Name.Tk.Val = "ev_" + fn.Func.Name.Tk.Val
-				}
+				formatEventFuncName(fn)
 				transpileFunc(b, scp, fn.Func)
 				if fn.Tk.Kind == token.Lst {
 					root.WriteString(fn.Func.Name.Tk.Val)
-					root.WriteString("(&")
-					root.WriteString(ev.Event.Name.Tk.Val)
-					root.WriteString(");")
+					root.WriteString("();")
 				}
 			} else {
 				if fn.Tk.Kind == token.Lst {
 					root.WriteString(fn.Link.Tk.Val)
-					root.WriteString("(&")
-					root.WriteString(ev.Event.Name.Tk.Val)
-					root.WriteString(");")
+					root.WriteString("();")
 				}
 			}
 		}
-
-		transpileEvent(b, scp, ev.Event, nd.HasInit)
 
 		if len(ev.Children) > 0 {
 			visit(b, scp, root, ev, mf)

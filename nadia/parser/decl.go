@@ -62,7 +62,10 @@ func parseValDef(t *lexer.Tokenizer, c *cursor) *ast.ValDef {
 		n.Type = parseIdent(t, c)
 	}
 
-	c.assert(token.Assign.String(), token.Assign)
+	if c.Kind != token.Assign {
+		return &n
+	}
+
 	c.next(t)
 
 	n.Val = parseExpr(t, c)

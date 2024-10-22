@@ -67,7 +67,12 @@ func (n *Def) Ed() int         { return n.Val.Ed() }
 
 func (n *ValDef) Kind() node.Kind { return node.ValueDef }
 func (n *ValDef) St() int         { return n.Tk.St }
-func (n *ValDef) Ed() int         { return n.Val.Ed() }
+func (n *ValDef) Ed() int {
+	if n.Val == nil {
+		return n.Name.Ed()
+	}
+	return n.Val.Ed()
+}
 
 func (n *Obj) Kind() node.Kind { return node.Obj }
 func (n *Obj) St() int         { return n.Tk.St }
